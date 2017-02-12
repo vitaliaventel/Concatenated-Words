@@ -9,10 +9,14 @@ public class Searcher {
 
 	private Set<String> currentSet;
 	private List<String> resultList;
+	private List<String> words;
+	private List<String> combinations;
 
 	public Searcher(Set<String> currentSet) {
 		this.currentSet = currentSet;
 		resultList = new ArrayList<>();
+		words = new ArrayList<>();
+		combinations = new ArrayList<>();
 	}
 
 	public List<String> getResultList() {
@@ -60,6 +64,7 @@ public class Searcher {
 		}
 	}
 
+	// too slow
 	public void findImprove() {
 		List<String> cache = new ArrayList<>();
 		for (String current : currentSet) {
@@ -71,6 +76,9 @@ public class Searcher {
 			boolean check = false;
 			boolean fullWord = false;
 			while (i < length) {
+				if(i >= 1 && cache.isEmpty()){
+					break;
+				}
 				temp = current.substring(i, j);
 				if (temp.length() != length) {
 					check = currentSet.contains(temp);
@@ -96,18 +104,39 @@ public class Searcher {
 				}
 				j++;
 			}
-			//TODO: all combinations???
-			if (cache.size() > 1) {
-				String word = "";
-				for (int k = 0; k < cache.size(); k++) {
 
-				}
-
-				if (currentSet.contains(word)) {
-					resultList.add(word);
+			words = cache;
+			if (words.size() > 1) {
+				permutation(0);
+				if (combinations.contains(current)) {
+					resultList.add(current);
 				}
 			}
+			words.clear();
+			cache.clear();
+			combinations.clear();
+		}
+	}
 
+	private void swap(int position1, int position2) {
+		String temp = words.get(position1);
+		words.set(position1, words.get(position2));
+		words.set(position2, temp);
+	}
+
+	private void permutation(int start) {
+		if (start != 0) {
+			String temp = "";
+			for (int i = 0; i < start; i++) {
+				temp = temp.concat(words.get(i));
+			}
+			combinations.add(temp);
+		}
+
+		for (int i = start; i < words.size(); i++) {
+			swap(start, i);
+			permutation(start + 1);
+			swap(start, i);
 		}
 	}
 
