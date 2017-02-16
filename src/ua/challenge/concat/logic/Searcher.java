@@ -1,7 +1,10 @@
 package ua.challenge.concat.logic;
 
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
 import java.util.Comparator;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
@@ -64,6 +67,44 @@ public class Searcher {
 		}
 	}
 
+	// correct implementation
+	public void findCorrect() {
+		List<String> currentList = new ArrayList<>(currentSet);
+		Set<String> preWords = new HashSet<>();
+		Collections.sort(currentList, new Comparator<String>() {
+			public int compare(String s1, String s2) {
+				return s1.length() - s2.length();
+			}
+		});
+
+		for (int i = 0; i < currentList.size(); i++) {
+			String temp = currentList.get(i);
+			if (canConcat(temp, preWords)) {
+				resultList.add(temp);
+			}
+			preWords.add(temp);
+		}
+	}
+
+	private boolean canConcat(String word, Set<String> dict) {
+		if (dict.isEmpty()) {
+			return false;
+		}
+		boolean[] dp = new boolean[word.length() + 1];
+		dp[0] = true;
+		for (int i = 1; i <= word.length(); i++) {
+			for (int j = 0; j < i; j++) {
+				if (!dp[j])
+					continue;
+				if (dict.contains(word.substring(j, i))) {
+					dp[i] = true;
+					break;
+				}
+			}
+		}
+		return dp[word.length()];
+	}
+
 	// too slow
 	public void findImprove() {
 		List<String> cache = new ArrayList<>();
@@ -76,7 +117,7 @@ public class Searcher {
 			boolean check = false;
 			boolean fullWord = false;
 			while (i < length) {
-				if(i >= 1 && cache.isEmpty()){
+				if (i >= 1 && cache.isEmpty()) {
 					break;
 				}
 				temp = current.substring(i, j);

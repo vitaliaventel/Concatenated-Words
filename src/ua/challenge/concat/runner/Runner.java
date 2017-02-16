@@ -24,9 +24,8 @@ public class Runner {
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
-
 		Searcher sr = new Searcher(set);
-		sr.find();
+		sr.findCorrect();
 		List<String> list = sr.getResultList();
 		Collections.sort(list, Searcher.getComparator());
 
